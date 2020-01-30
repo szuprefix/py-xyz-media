@@ -1,0 +1,10 @@
+*.log
+*.pot
+*.pyc
+.idea
+local_settings.py
+node_modules
+build
+dist
+.DS_Store 
+*.egg-info
