@@ -14,4 +14,4 @@ class Config(AppConfig):
 
     def ready(self):
         super(Config, self).ready()
-        # from . import receivers
+        from . import receivers
