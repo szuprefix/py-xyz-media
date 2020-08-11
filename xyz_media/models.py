@@ -25,6 +25,7 @@ class Lecturer(models.Model):
 class Video(models.Model):
     class Meta:
         verbose_name_plural = verbose_name = "视频"
+        ordering = ('owner_type', 'owner_id', 'name')
 
     user = models.ForeignKey(User, verbose_name=User._meta.verbose_name, related_name="media_videos",
                              on_delete=models.PROTECT)
@@ -55,8 +56,8 @@ class Image(models.Model):
     user = models.ForeignKey(User, verbose_name=User._meta.verbose_name, related_name="media_images",
                              on_delete=models.PROTECT)
     owner_type = models.ForeignKey(ContentType, verbose_name='属主类别', null=True, blank=True,
-                                   on_delete=models.PROTECT)
-    owner_id = models.PositiveIntegerField(verbose_name='属主编号', null=True, blank=True)
+                                   on_delete=models.PROTECT, related_name="media_images")
+    owner_id = models.PositiveIntegerField(verbose_name='属主编号', null=True, blank=True, db_index=True)
     owner = GenericForeignKey('owner_type', 'owner_id')
     name = models.CharField("名称", max_length=255)
     # description = models.CharField("描述", max_length=255, null=True, blank=True, default='')

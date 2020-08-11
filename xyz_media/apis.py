@@ -4,7 +4,7 @@ from xyz_restful.mixins import UserApiMixin, BatchActionMixin
 from rest_framework.response import Response
 from xyz_util.statutils import do_rest_stat_action
 
-from . import models, serializers, stats
+from . import models, serializers, stats, helper
 from rest_framework import viewsets, decorators
 from xyz_restful.decorators import register
 
