@@ -79,3 +79,14 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
         from xyz_qcloud.cos import gen_signature
         return Response(gen_signature(allow_prefix='%s/%s/images/*' % (owner_type.replace('.', '/'), owner_id)))
 
+
+    @decorators.list_route(['GET', 'POST'])
+    def user_signature(self, request):
+        d = request.query_params
+        uid = request.user.id
+        owner_type = d.get('owner_type')
+        owner_id = d.get('owner_id')
+        from xyz_qcloud.cos import gen_signature
+        return Response(gen_signature(allow_prefix='%s/%s/images/u%s/*' % (owner_type.replace('.', '/'), owner_id, uid)))
+
+
