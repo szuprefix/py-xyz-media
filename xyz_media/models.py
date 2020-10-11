@@ -40,6 +40,7 @@ class Video(models.Model):
     duration = models.PositiveSmallIntegerField('时长', blank=True, default=0, help_text='单位: 秒.', editable=False)
     size = models.PositiveIntegerField('大小', blank=True, default=0, help_text='单位: 比特Byte', editable=False)
     context = modelutils.JSONField("详情", blank=True, default={})
+    outline = models.TextField("大纲", blank=True, default='', help_text='可在每一行最后加上时间点， 格式样例: [03:12]')
     status = models.PositiveSmallIntegerField("状态", choices=choices.STATUS, blank=True, default=choices.STATUS_PROCESS)
     is_active = models.BooleanField("有效", blank=False, default=False)
     lecturer = models.ForeignKey(Lecturer, verbose_name=Lecturer._meta.verbose_name, blank=True, null=True, related_name="videos", on_delete=models.PROTECT)
