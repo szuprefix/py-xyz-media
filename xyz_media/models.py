@@ -62,7 +62,7 @@ class Image(models.Model):
     owner = GenericForeignKey('owner_type', 'owner_id')
     name = models.CharField("名称", max_length=255)
     # description = models.CharField("描述", max_length=255, null=True, blank=True, default='')
-    url = models.URLField("网址")
+    url = models.URLField("网址", max_length=255)
     is_active = models.BooleanField("有效", blank=False, default=False)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
