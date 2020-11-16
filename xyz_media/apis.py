@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 from __future__ import division, unicode_literals
+
+from xyz_dailylog.mixins import ViewsMixin
 from xyz_restful.mixins import UserApiMixin, BatchActionMixin
 from rest_framework.response import Response
 from xyz_util.statutils import do_rest_stat_action
@@ -24,7 +26,7 @@ class LecturerViewSet(viewsets.ModelViewSet):
         return Response(gen_signature(allow_prefix='/media/lecturer/avatar/%s.*' % self.get_object().id))
 
 @register()
-class VideoViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
+class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
     queryset = models.Video.objects.all()
     serializer_class = serializers.VideoSerializer
     search_fields = ('name',)
