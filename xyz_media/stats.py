@@ -5,7 +5,7 @@ from . import models
 from xyz_util import statutils
 
 
-def stats_video(qset=None, measures=None, period=None):
+def stats_video(qset=None, measures=None, period=None, time_field=None):
     qset = qset if qset is not None else models.Video.objects.all()
     qset = statutils.using_stats_db(qset)
     dstat = statutils.DateStat(qset, 'create_time')
@@ -28,7 +28,7 @@ def stats_video(qset=None, measures=None, period=None):
     return dict([(m, funcs[m]()) for m in measures])
 
 
-def stats_fault(qset=None, measures=None, period=None):
+def stats_fault(qset=None, measures=None, period=None, time_field=None):
     qset = qset if qset is not None else models.Fault.objects.all()
     qset = statutils.using_stats_db(qset)
     dstat = statutils.DateStat(qset, 'update_time')
