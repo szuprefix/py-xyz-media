@@ -5,7 +5,7 @@ from xyz_dailylog.mixins import ViewsMixin
 from xyz_restful.mixins import UserApiMixin, BatchActionMixin
 from rest_framework.response import Response
 from xyz_util.statutils import do_rest_stat_action
-
+from django_filters.rest_framework import DjangoFilterBackend
 from . import models, serializers, stats, helper
 from rest_framework import viewsets, decorators
 from xyz_restful.decorators import register
@@ -20,7 +20,7 @@ class LecturerViewSet(viewsets.ModelViewSet):
     }
 
 
-    @decorators.detail_route(['GET', 'POST'])
+    @decorators.action(['GET', 'POST'], detail=True)
     def avatar_signature(self, request, pk):
         from xyz_qcloud.cos import gen_signature
         return Response(gen_signature(allow_prefix='/media/lecturer/avatar/%s.*' % self.get_object().id))
@@ -39,22 +39,27 @@ class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelVie
     }
     ordering_fields = ('is_active', 'name', 'create_time', 'owner_type')
 
-    @decorators.list_route(['POST'])
+    @decorators.action(['POST'], detail=False)
     def batch_active(self, request):
         return self.do_batch_action('is_active', True)
 
-    @decorators.list_route(['POST'])
+    @decorators.action(['POST'], detail=False)
     def batch_update_media_info(self, request):
         return self.do_batch_action(helper.sync_qcloud_vod_info)
 
-    @decorators.list_route(['GET', 'POST'])
+    @decorators.action(['GET', 'POST'], detail=False)
     def signature(self, request):
         from xyz_qcloud.vod import gen_signature
         return Response({'signature': gen_signature(extra_params="procedure=流畅")})
 
-    @decorators.list_route(['get'])
+    @decorators.action(['get'], detail=False)
     def stat(self, request):
         return do_rest_stat_action(self, stats.stats_video)
+
+    @decorators.action(['GET'], detail=False, filter_backends=[DjangoFilterBackend])
+    def count(self, request):
+        c = self.filter_queryset(self.get_queryset()).count()
+        return Response({'count': c})
 
 
 @register()
@@ -69,11 +74,11 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
     }
     ordering_fields = ('is_active', 'create_time', 'owner_type')
 
-    @decorators.list_route(['POST'])
+    @decorators.action(['POST'], detail=False)
     def batch_active(self, request):
         return self.do_batch_action('is_active', True)
 
-    @decorators.list_route(['GET', 'POST'])
+    @decorators.action(['GET', 'POST'], detail=False)
     def signature(self, request):
         d = request.query_params
         owner_type = d.get('owner_type')
@@ -82,7 +87,7 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
         return Response(gen_signature(allow_prefix='%s/%s/images/*' % (owner_type.replace('.', '/'), owner_id)))
 
 
-    @decorators.list_route(['GET', 'POST'])
+    @decorators.action(['GET', 'POST'], detail=False)
     def user_signature(self, request):
         d = request.query_params
         uid = request.user.id
