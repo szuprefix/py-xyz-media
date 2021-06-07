@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*- 
 # author = 'denishuang'
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 from . import choices
 
 
@@ -34,7 +34,7 @@ def noticeForgetExcerciseViewer(begin_date=None, end_date=None, uids=None):
     if isinstance(uids, (str, unicode)):
         from xyz_auth.helper import find_user_ids_by_tag
         uids = list(find_user_ids_by_tag(uids))
-        print uids
+        print(uids)
     for vid, pids in vd.iteritems():
         lookup = dict(
             owner_type=vct,
@@ -58,9 +58,9 @@ def noticeForgetExcerciseViewer(begin_date=None, end_date=None, uids=None):
                 video = Video.objects.get(id=vid)
                 tag = '用户.ID:%s' % ','.join([unicode(uid) for uid in fuids])
                 unique_id = None if uids is not None else "video.has_exer:%d@%s" % (vid, begin_date.isoformat().replace('-', '')[2:8])
-                print unique_id, create_task(
+                print(unique_id, create_task(
                     tag,
                     '您观看的视频<%s>有配套习题, 请记得练习哦' % video.name,
                     link='/media/video/%d' % vid,
                     unique_id=unique_id
-                )
+                ))
