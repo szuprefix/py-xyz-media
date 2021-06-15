@@ -19,7 +19,7 @@ class Lecturer(models.Model):
     description = models.CharField("描述", max_length=255, null=True, blank=True, default='')
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class Video(models.Model):
@@ -46,7 +46,7 @@ class Video(models.Model):
     lecturer = models.ForeignKey(Lecturer, verbose_name=Lecturer._meta.verbose_name, blank=True, null=True, related_name="videos", on_delete=models.PROTECT)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -66,7 +66,7 @@ class Image(models.Model):
     is_active = models.BooleanField("有效", blank=False, default=False)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -86,6 +86,6 @@ class Attachment(models.Model):
     is_active = models.BooleanField("有效", blank=False, default=False)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
