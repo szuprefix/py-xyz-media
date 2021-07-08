@@ -38,8 +38,9 @@ def save_owner_new_video_count(sender, **kwargs):
         last_month = get_next_date(days=-30)
         new_count = models.Video.objects.filter(owner_type=video.owner_type, owner_id=video.owner_id, create_time__gt=last_month).count()
         owner = video.owner
-        owner.data['media_video_new_count'] = new_count
-        owner.save()
+        if hasattr(owner, 'data'):
+            owner.data['media_video_new_count'] = new_count
+            owner.save()
     except:
         import traceback
         log.error('save_owner_new_video_count error: %s', traceback.format_exc())
