@@ -53,6 +53,7 @@ class Video(models.Model):
 class Image(models.Model):
     class Meta:
         verbose_name_plural = verbose_name = "图片"
+        ordering = ('-create_time',)
 
     user = models.ForeignKey(User, verbose_name=User._meta.verbose_name, related_name="media_images",
                              on_delete=models.PROTECT)
@@ -63,7 +64,7 @@ class Image(models.Model):
     name = models.CharField("名称", max_length=255)
     # description = models.CharField("描述", max_length=255, null=True, blank=True, default='')
     url = models.URLField("网址", max_length=255)
-    is_active = models.BooleanField("有效", blank=False, default=False)
+    is_active = models.BooleanField("有效", blank=False, default=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
     def __str__(self):
@@ -83,7 +84,7 @@ class Attachment(models.Model):
     name = models.CharField("名称", max_length=255)
     description = models.CharField("描述", max_length=255, null=True, blank=True, default='')
     url = models.URLField("网址")
-    is_active = models.BooleanField("有效", blank=False, default=False)
+    is_active = models.BooleanField("有效", blank=False, default=True)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
     def __str__(self):
