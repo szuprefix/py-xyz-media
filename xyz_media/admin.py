@@ -15,3 +15,8 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ('create_time', 'name', 'is_active', 'owner_type')
     raw_id_fields = ('user',)
     search_fields = ("name", )
+
+@admin.register(models.Lecturer)
+class LecturerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ("name", 'description' )

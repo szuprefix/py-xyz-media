@@ -16,11 +16,15 @@ class Lecturer(models.Model):
 
     avatar = models.URLField("头像", null=True, blank=True)
     name = models.CharField("名称", max_length=255)
-    description = models.CharField("描述", max_length=255, null=True, blank=True, default='')
+    description = models.TextField("描述", null=True, blank=True, default='')
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def video_avg_score(self):
+        from xyz_comment.models import Rating
 
 class Video(models.Model):
     class Meta:
