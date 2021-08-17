@@ -25,6 +25,12 @@ class LecturerViewSet(viewsets.ModelViewSet):
         from xyz_qcloud.cos import gen_signature
         return Response(gen_signature(allow_prefix='/media/lecturer/avatar/%s.*' % self.get_object().id))
 
+
+    @decorators.action(['GET'], detail=True)
+    def video_rating_sumary(self, request, pk):
+        l = self.get_object()
+        return Response(l.video_rating_sumary)
+
 @register()
 class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
     queryset = models.Video.objects.all()

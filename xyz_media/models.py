@@ -23,8 +23,15 @@ class Lecturer(models.Model):
         return self.name
 
     @property
-    def video_avg_score(self):
-        from xyz_comment.models import Rating
+    def video_rating_sumary(self):
+        from xyz_comment.models import RatingSumary
+        from django.contrib.contenttypes.models import ContentType
+        from django.db.models import Avg, Sum
+        vids = list(self.videos.values_list('id', flat=True))
+        return RatingSumary.objects.filter(
+            content_type=ContentType.objects.get_for_model(Video),
+            object_id__in=vids
+        ).aggregate(score_avg=Avg('score'), user_count =Sum('user_count'))
 
 class Video(models.Model):
     class Meta:
