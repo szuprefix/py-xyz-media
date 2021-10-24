@@ -30,4 +30,11 @@ class ImageSerializer(IDAndStrFieldSerializerMixin, serializers.ModelSerializer)
         read_only_fields = ('user', 'create_time')
 
 
+class AudioSerializer(IDAndStrFieldSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = models.Audio
+        fields = '__all__'
+        read_only_fields = ('user', 'create_time')
+
+
 

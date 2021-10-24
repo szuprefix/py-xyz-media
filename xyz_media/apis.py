@@ -103,3 +103,28 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
         return Response(gen_signature(allow_prefix='%s/%s/images/u%s/*' % (owner_type.replace('.', '/'), owner_id, uid)))
 
 
+
+@register()
+class AudioViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
+    queryset = models.Audio.objects.all()
+    serializer_class = serializers.AudioSerializer
+    search_fields = ('name',)
+    filter_fields = {
+        'id': ['in', 'exact'],
+        'is_active': ['exact'],
+        'owner_type': ['exact'],
+        'owner_id': ['exact', 'in']
+    }
+    ordering_fields = ('is_active', 'name', 'create_time', 'owner_type')
+
+    @decorators.action(['POST'], detail=False)
+    def batch_active(self, request):
+        return self.do_batch_action('is_active', True)
+
+    @decorators.action(['GET', 'POST'], detail=False)
+    def signature(self, request):
+        d = request.query_params
+        owner_type = d.get('owner_type')
+        owner_id = d.get('owner_id')
+        from xyz_qcloud.cos import gen_signature
+        return Response(gen_signature(allow_prefix='/%s/%s/audio/*' % (owner_type.replace('.', '/'), owner_id)))
