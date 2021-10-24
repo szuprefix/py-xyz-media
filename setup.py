@@ -5,7 +5,7 @@ import sys
 
 setup(
     name="xyz-media",
-    version="0.1.4",
+    version="0.1.5",
     author="szuprefix",
     author_email="szuprefix@126.com",
     description="media",
