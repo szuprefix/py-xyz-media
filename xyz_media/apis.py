@@ -31,6 +31,15 @@ class LecturerViewSet(viewsets.ModelViewSet):
         l = self.get_object()
         return Response(l.video_rating_sumary)
 
+    @decorators.action(['GET'], detail=False)
+    def video_rating_rank(self, request):
+        rs = []
+        for l in self.filter_queryset(self.get_queryset()):
+            d = self.get_serializer(instance=l).data
+            d.update(l.video_rating_sumary)
+            rs.append(d)
+        return Response(dict(count=len(rs), results=rs))
+
 @register()
 class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
     queryset = models.Video.objects.all()

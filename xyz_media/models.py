@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.utils.functional import cached_property
+
 from . import choices
 from django.contrib.auth.models import User
 from xyz_util import modelutils
@@ -22,7 +24,7 @@ class Lecturer(models.Model):
     def __str__(self):
         return self.name
 
-    @property
+    @cached_property
     def video_rating_sumary(self):
         from xyz_comment.models import RatingSumary
         from django.contrib.contenttypes.models import ContentType
