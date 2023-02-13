@@ -23,6 +23,10 @@ class VideoSerializer(IDAndStrFieldSerializerMixin, serializers.ModelSerializer)
         read_only_fields = ('user', 'create_time')
 
 
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField(required=True)
+
+
 class ImageSerializer(IDAndStrFieldSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = models.Image

@@ -7,7 +7,6 @@ from django.conf import settings
 
 from xyz_saas.signals import to_get_party_settings
 from xyz_util.datautils import access
-from xyz_util.dateutils import get_next_date
 from django.db.models.signals import post_save
 from . import models
 import logging
@@ -35,12 +34,8 @@ def get_media_settings(sender, **kwargs):
 def save_owner_new_video_count(sender, **kwargs):
     video = kwargs.get('instance')
     try:
-        last_month = get_next_date(days=-30)
-        new_count = models.Video.objects.filter(owner_type=video.owner_type, owner_id=video.owner_id, create_time__gt=last_month).count()
-        owner = video.owner
-        if hasattr(owner, 'data'):
-            owner.data['media_video_new_count'] = new_count
-            owner.save()
+        from .helper import update_object_new_video_count
+        update_object_new_video_count(video.owner)
     except:
         import traceback
         log.error('save_owner_new_video_count error: %s', traceback.format_exc())

@@ -1,7 +1,11 @@
 # -*- coding:utf-8 -*- 
 # author = 'denishuang'
 from __future__ import unicode_literals, print_function
-from . import choices
+from . import choices, models
+
+from xyz_util.dateutils import get_next_date
+from xyz_util.statutils import group_by
+from django.contrib.contenttypes.models import ContentType
 
 
 def sync_qcloud_vod_info(v):
@@ -57,10 +61,40 @@ def noticeForgetExcerciseViewer(begin_date=None, end_date=None, uids=None):
             if fuids:
                 video = Video.objects.get(id=vid)
                 tag = '用户.ID:%s' % ','.join([unicode(uid) for uid in fuids])
-                unique_id = None if uids is not None else "video.has_exer:%d@%s" % (vid, begin_date.isoformat().replace('-', '')[2:8])
+                unique_id = None if uids is not None else "video.has_exer:%d@%s" % (
+                vid, begin_date.isoformat().replace('-', '')[2:8])
                 print(unique_id, create_task(
                     tag,
                     '您观看的视频<%s>有配套习题, 请记得练习哦' % video.name,
                     link='/media/video/%d' % vid,
                     unique_id=unique_id
                 ))
+
+
+def update_object_new_video_count(owner):
+    if isinstance(owner, tuple):
+        owner_type, owner_id = owner
+        owner = ContentType.objects.get_for_id(owner_type).get_object_for_this_type(pk=owner_id)
+    else:
+        owner_type = ContentType.objects.get_for_model(owner)
+        owner_id = owner.id
+    if hasattr(owner, 'data'):
+        last_month = get_next_date(days=-30)
+        new_count = models.Video.objects.filter(
+            owner_type=owner_type,
+            owner_id=owner_id,
+            create_time__gt=last_month
+        ).count()
+        print(owner, new_count)
+        owner.data['media_video_new_count'] = new_count
+        owner.save()
+
+
+def update_expire_objects_new_video_count(cond=None):
+    if cond is None:
+        date_begin = get_next_date(days=-31)
+        date_end = get_next_date(days=-30)
+        cond = dict(create_time__gt=date_begin, create_time__lt=date_end)
+    qset = models.Video.objects.filter(**cond)
+    for owner_type, owner_id, vcount in group_by(qset, ['owner_type', 'owner_id']):
+        update_object_new_video_count((owner_type, owner_id))

@@ -76,6 +76,14 @@ class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelVie
         c = self.filter_queryset(self.get_queryset()).count()
         return Response({'count': c})
 
+    @decorators.action(['POST'], detail=False, serializer_class=serializers.FileUploadSerializer)
+    def upload(self, request):
+        from django.core.files.storage import FileSystemStorage
+        st = FileSystemStorage()
+        fn = 'hello.tmp'
+        st.save(fn, request.FILES['file'])
+        print(st.path(fn))
+        return Response(dict(url=st.url(fn)))
 
 @register()
 class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
