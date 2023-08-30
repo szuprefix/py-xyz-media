@@ -13,6 +13,7 @@ def stats_video(qset=None, measures=None, period=None, time_field=None):
         'today': lambda: dstat.stat("今天", count_field="id", only_first=True),
         'yesterday': lambda: dstat.stat("昨天", count_field="id", only_first=True),
         'all': lambda: qset.values("id").distinct().count(),
+        'tags': lambda: statutils.count_by(qset, 'tags'),
         'count': lambda: dstat.get_period_query_set(period).count(),
         'owner_type': lambda: statutils.count_by(
             dstat.get_period_query_set(period),

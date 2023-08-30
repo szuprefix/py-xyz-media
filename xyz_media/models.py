@@ -55,6 +55,7 @@ class Video(models.Model):
     context = modelutils.JSONField("详情", blank=True, default={})
     outline = models.TextField("大纲", blank=True, default='', help_text='可在每一行最后加上时间点， 格式样例: [03:12]')
     status = models.PositiveSmallIntegerField("状态", choices=choices.STATUS, blank=True, default=choices.STATUS_PROCESS)
+    tags = models.CharField('标签', max_length=256, blank=True, default='')
     is_active = models.BooleanField("有效", blank=False, default=False)
     lecturer = models.ForeignKey(Lecturer, verbose_name=Lecturer._meta.verbose_name, blank=True, null=True, related_name="videos", on_delete=models.PROTECT)
     create_time = models.DateTimeField("创建时间", auto_now_add=True, db_index=True)
