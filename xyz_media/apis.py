@@ -48,6 +48,8 @@ class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelVie
     filter_fields = {
         'id': ['in', 'exact'],
         'is_active': ['exact'],
+        'tags': ['exact'],
+        'status': ['exact'],
         'owner_type': ['exact'],
         'owner_id': ['exact', 'in'],
         'lecturer': ['exact', 'in'],
