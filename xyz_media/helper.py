@@ -1,6 +1,9 @@
 # -*- coding:utf-8 -*- 
 # author = 'denishuang'
 from __future__ import unicode_literals, print_function
+
+from six import text_type
+
 from . import choices, models
 
 from xyz_util.dateutils import get_next_date
@@ -35,11 +38,11 @@ def noticeForgetExcerciseViewer(begin_date=None, end_date=None, uids=None):
     pct = ContentType.objects.get_for_model(Paper)
     vct = ContentType.objects.get_for_model(Video)
     vd = list_dict(Paper.objects.filter(owner_type=vct).values_list('owner_id', 'id'))
-    if isinstance(uids, (str, unicode)):
+    if isinstance(uids, text_type):
         from xyz_auth.helper import find_user_ids_by_tag
         uids = list(find_user_ids_by_tag(uids))
         print(uids)
-    for vid, pids in vd.iteritems():
+    for vid, pids in vd.items():
         lookup = dict(
             owner_type=vct,
             owner_id=vid,

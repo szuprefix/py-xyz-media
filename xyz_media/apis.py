@@ -10,6 +10,7 @@ from . import models, serializers, stats, helper
 from rest_framework import viewsets, decorators
 from xyz_restful.decorators import register
 
+
 @register()
 class LecturerViewSet(viewsets.ModelViewSet):
     queryset = models.Lecturer.objects.all()
@@ -19,12 +20,10 @@ class LecturerViewSet(viewsets.ModelViewSet):
         'id': ['in', 'exact'],
     }
 
-
     @decorators.action(['GET', 'POST'], detail=True)
     def avatar_signature(self, request, pk):
         from xyz_qcloud.cos import gen_signature
         return Response(gen_signature(allow_prefix='/media/lecturer/avatar/%s.*' % self.get_object().id))
-
 
     @decorators.action(['GET'], detail=True)
     def video_rating_sumary(self, request, pk):
@@ -39,6 +38,7 @@ class LecturerViewSet(viewsets.ModelViewSet):
             d.update(l.video_rating_sumary)
             rs.append(d)
         return Response(dict(count=len(rs), results=rs))
+
 
 @register()
 class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
@@ -87,6 +87,17 @@ class VideoViewSet(ViewsMixin, UserApiMixin, BatchActionMixin, viewsets.ModelVie
         print(st.path(fn))
         return Response(dict(url=st.url(fn)))
 
+    @decorators.action(['POST'], detail=True)
+    def copy(self, request, pk):
+        f = self.get_object()
+        pd = request.data
+        f.id = None
+        f.owner_type_id = pd['owner_type']
+        f.owner_id = pd['owner_id']
+        f.save()
+        return Response(self.get_serializer(f).data)
+
+
 @register()
 class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
     queryset = models.Image.objects.all()
@@ -111,7 +122,6 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
         from xyz_qcloud.cos import gen_signature
         return Response(gen_signature(allow_prefix='/%s/%s/images/*' % (owner_type.replace('.', '/'), owner_id)))
 
-
     @decorators.action(['GET', 'POST'], detail=False)
     def user_signature(self, request):
         d = request.query_params
@@ -119,8 +129,8 @@ class ImageViewSet(UserApiMixin, BatchActionMixin, viewsets.ModelViewSet):
         owner_type = d.get('owner_type')
         owner_id = d.get('owner_id')
         from xyz_qcloud.cos import gen_signature
-        return Response(gen_signature(allow_prefix='%s/%s/images/u%s/*' % (owner_type.replace('.', '/'), owner_id, uid)))
-
+        return Response(
+            gen_signature(allow_prefix='%s/%s/images/u%s/*' % (owner_type.replace('.', '/'), owner_id, uid)))
 
 
 @register()
